@@ -32,6 +32,9 @@ You can set the height and width of the generated qrcode:
 
     jquery('#qrcode').qrcode({width: 64,height: 64,text: "size doesn't matter"});
 
+Added the console output feature:
+	
+	jquery(this).qrcode({render:'console',text:'...',appendText:'Some thing shows in center of QRCode'});
 
 ## Conclusion
 <a href='http://jeromeetienne.github.com/jquery-qrcode'>jquery.qrcode.js</a> is available on github
