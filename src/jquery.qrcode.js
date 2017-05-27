@@ -79,9 +79,52 @@
 			// return just built canvas
 			return $table;
 		}
+		
+		var createStr=	function (settings){
+		var qrcode = new QRCode(options.typeNumber, options.correctLevel);
+		qrcode.addData(options.text);
+		qrcode.make();
+		if (!qrcode) {
+            return null;
+        }
+		var t="",BLANK='　',DARK='▉';
+		var moduleCount = qrcode.moduleCount;
+		var appendText = options.appendText || ""
+		, appendLen = appendText.length
+		, appendCount= Math.ceil(Math.sqrt(appendLen))
+		, appendIndex = 0;
+		
+		if(moduleCount&1!=appendCount&1){
+			appendCount ++;
+		}
+		var appendCountStart = Math.round((moduleCount-appendCount)/2);
+		var appendCountEnd = appendCountStart + appendCount -1;
+		appendText=appendText.padStart(Math.round((appendCount*appendCount-appendLen)/2)+appendLen,BLANK);
+		
+		for (var row = 0; row < moduleCount; row += 1) {
+			for (var col = 0; col < moduleCount; col += 1) {
+				if(appendCount&&row>=appendCountStart&&row<=appendCountEnd
+					&&col>=appendCountStart&&col<=appendCountEnd){
+					if(appendIndex<appendText.length)
+						t+=appendText.charAt(appendIndex++);
+					else
+						t+=BLANK;
+				}else if (qrcode.isDark(row, col)) {
+					t+=DARK;
+				}else{
+					t+=BLANK;
+				}
+			}
+			t+="\n"
+		}
+		return t;
+	}
   
-
 		return this.each(function(){
+			if(options.render == "console") {
+				console.log(createStr());
+				return;
+			}
 			var element	= options.render == "canvas" ? createCanvas() : createTable();
 			$(element).appendTo(this);
 		});
